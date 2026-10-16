@@ -1,0 +1,96 @@
+<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>Aula 12 · (sem nome)</title><style>body{font:15px/1.5 "Segoe UI",system-ui,sans-serif;max-width:820px;margin:2rem auto;padding:0 16px;color:#111}h2{border-bottom:2px solid #ddd;padding-bottom:.25rem;margin-top:1.6rem}dt{font-weight:700;margin-top:.6rem}dd{margin:.2rem 0 0;white-space:pre-wrap}dd.vazio{color:#b42318;font-style:italic}img{max-width:100%;border:1px solid #ccc;border-radius:6px}pre{background:#f4f4f4;padding:.6rem;border-radius:6px;white-space:pre-wrap;font:12.5px/1.45 Consolas,monospace}</style><h1>Laboratório Funcional · Aula 12</h1><p>(sem nome)<br>Gerado em 16/10/2026, 19:46:14 · tempo exibido no cronômetro (ajustado): 54:25</p><h2>Preparação: Programar com funções matemáticas</h2><dl><dt>def area(r): return 3.14159 * r * r</dt><dd>Pura</dd><dt>def agora(): return datetime.now()</dt><dd>Impura</dd><dt>def total(lista): return sum(lista)</dt><dd>Pura</dd><dt>def registra(msg): print(msg)</dt><dd>Impura</dd><dt>def sorteia(): return random.randint(1, 6)</dt><dd>Impura</dd><dt>def poe(lista, x): lista.append(x); return lista</dt><dd>Impura</dd><dt>0.1 Escolha duas funções que você marcou como impuras e explique, para cada uma, o que a impede de ser pura.</dt><dd>agora() não é pura porque a hora muda toda vez. poe() também não é pura porque mexe na lista que recebeu.</dd></dl><h2>Prática 1: Funções puras e formas funcionais</h2><dl><dt>Previsão: O que as linhas 1, 4 e 7 vão imprimir?</dt><dd>Linha 1: 1: A-1 A-2; linha 4: 4: 14; linha 7: 7: [7, 3, 9] [3, 7, 9].</dd><dt>Saídas (original e com compor(g, f))</dt><dd><pre>Original:
+1: A-1 A-2
+2: True
+3: 8
+4: 14
+5: [4, 9, 16]
+6: 29
+7: [7, 3, 9] [3, 7, 9]
+8: [3, 7, 9]
+
+Com compor(g, f):
+1: A-1 A-2
+2: True
+3: 8
+4: 18
+5: [4, 9, 16]
+6: 29
+7: [7, 3, 9] [3, 7, 9]
+8: [3, 7, 9]</pre></dd><dt>1.1 Por que proximo_id("A") devolve valores diferentes para a mesma entrada? Por que isso dificulta os testes (p. 637)?</dt><dd>Porque tem um contador fora da função e ele aumenta toda vez. Aí mesmo passando A, sai A-1, A-2 e assim vai. Isso atrapalha o teste porque o resultado muda.</dd><dt>1.2 compor(f, g)(4) e compor(g, f)(4) deram valores diferentes. Calcule os dois à mão e explique a diferença.</dt><dd>No primeiro, 4 vezes 3 dá 12, mais 2 dá 14. No segundo, 4 mais 2 dá 6, vezes 3 dá 18. Deu diferente porque trocou a ordem das funções.</dd><dt>1.3 Qual é a diferença entre sorted(notas) e notas.sort()? Qual dos dois segue o estilo funcional, e por quê?</dt><dd>sorted() faz outra lista em ordem e deixa a primeira como estava. sort() muda a lista original. O sorted() é mais funcional porque não altera a lista.</dd></dl><h2>Prática 2: Scheme: tudo é lista</h2><dl><dt>Previsão: (car '(A B C))</dt><dd>A</dd><dt>Previsão: (cdr '(A B C))</dt><dd>(B C)</dd><dt>Previsão: (cons '(A B) '(C D))</dt><dd>((A B) C D)</dd><dt>Saídas (original e sem o apóstrofo)</dt><dd><pre>Original:
+22
+14
+25
+8
+negativo
+A
+(B C)
+(A B C)
+((A B) C D)
+B
+
+Sem o apóstrofo em (car (A B C)): ocorre um erro, porque Scheme tenta chamar A como função (identificador não definido). A mensagem específica varia conforme o interpretador.</pre></dd><dt>2.1 Para que serve o apóstrofo (')? O que o Scheme tentou fazer com (A B C) quando ele não estava lá?</dt><dd>O apóstrofo faz o Scheme entender que aquilo é uma lista, não um código para executar. Sem ele, tenta executar o A como se fosse função e dá erro.</dd><dt>2.2 Escreva uma expressão que devolva o terceiro elemento de '(A B C) usando só car e cdr. Teste no OneCompiler e cole aqui a expressão e o resultado.</dt><dd><pre>(car (cdr (cdr '(A B C))))
+Resultado esperado: C</pre></dd></dl><h2>Prática 3: Recursão e recursão em cauda</h2><dl><dt>O que vi no passo a passo</dt><dd>Na normal, ele fica esperando as outras contas terminarem. Na de cauda, vai passando o resultado junto, sem deixar conta pra depois.</dd><dt>Previsão: O programa em Scheme chama conta-ate recursivamente um milhão de vezes. Vai funcionar? E a mesma função em Python?</dt><dd>Acho que no Scheme chega até 1000000, mas no Python dá erro quando tenta fazer chamadas demais.</dd><dt>Saída do Scheme</dt><dd><pre>Scheme:
+#t
+#f
+2432902008176640000
+2432902008176640000
+1000000</pre></dd><dt>Saída do Python (as últimas linhas bastam)</dt><dd><pre>Python:
+500
+Traceback (most recent call last):
+  ...
+RecursionError: maximum recursion depth exceeded
+(O traceback exato varia conforme a versão.)</pre></dd><dt>3.1 No passo a passo, o que cresce na recursão comum e não cresce na recursão em cauda? Por quê?</dt><dd>Na recursão normal ficam várias contas esperando na memória. Na de cauda não, porque ele já passa o resultado pra próxima chamada.</dd><dt>3.2 Por que o Scheme fez um milhão de chamadas e o Python parou com RecursionError? (Dica: releia o quadro sobre a otimização da chamada em cauda e a mensagem de erro do Python. O livro fala do Scheme na p. 656.)</dt><dd>Porque Scheme consegue fazer muitas chamadas em cauda sem ficar enchendo a pilha. Python tem um limite de recursão, então uma hora dá erro.</dd></dl><h2>Prática 4: Mão na massa: três funções sobre listas</h2><dl><dt>Saída final (com os três ok)</dt><dd><pre>Resultado esperado:
+tamanho: 3  ok
+soma-quadrados: 14  ok
+pares: (2 4 6)  ok</pre></dd><dt>4.1 Cole aqui as suas três funções (tamanho, soma-quadrados e pares).</dt><dd><pre>(define (tamanho lis)
+  (if (null? lis) 0 (+ 1 (tamanho (cdr lis)))))
+
+(define (soma-quadrados lis)
+  (if (null? lis) 0 (+ (* (car lis) (car lis)) (soma-quadrados (cdr lis)))))
+
+(define (pares lis)
+  (cond ((null? lis) '())
+        ((even? (car lis)) (cons (car lis) (pares (cdr lis))))
+        (else (pares (cdr lis)))))</pre></dd><dt>4.2 Qual foi a parte mais difícil? Onde você usou null?, car e cdr em cada função?</dt><dd>A parte mais difícil foi fazer a lista só com números pares. Usei null? pra ver se acabou, car pra pegar o número e cdr pra ir pro próximo.</dd></dl><h2>Prática 5: Haskell: padrões, compreensões e preguiça</h2><dl><dt>Previsão: squares é uma lista infinita. O que você acha que take 5 squares imprime? E primeiro 42 (div 1 0)?</dt><dd>O take mostra [0,1,4,9,16]. O outro mostra 42, porque não precisa fazer a divisão por zero.</dd><dt>Saídas (original e com member 17)</dt><dd><pre>Original:
+2432902008176640000
+[1,2,4,7,14]
+[2,2,4,7,8,9]
+[0,1,4,9,16]
+[0,1,4,9,16,25,36,49]
+True
+42
+
+Com member 17 squares: a execução não termina normalmente (procura indefinidamente na lista infinita); interrompa a execução.</pre></dd><dt>5.1 Como o Haskell consegue imprimir parte de uma lista infinita? E por que primeiro 42 (div 1 0) não deu erro de divisão por zero?</dt><dd>Porque Haskell só calcula o que precisa. O take pega só alguns valores da lista infinita. E no outro exemplo ele nem usa a divisão por zero, então não dá erro.</dd><dt>5.2 O que aconteceu com member 17 squares? Por que ele nunca termina, enquanto member 16 squares terminou? Como você corrigiria? (Dica: squares está em ordem crescente. Quando já dá para desistir da busca? O livro mostra uma solução na p. 670.)</dt><dd>Porque 17 não aparece na lista dos quadrados, então ele fica procurando pra sempre. Já o 16 aparece e ele para. Dá pra limitar a busca usando takeWhile.</dd></dl><h2>Prática 6: Você já usa funcional</h2><dl><dt>Previsão: O que mais10(5) e [1, 2, 3].map(vezes(5)) vão imprimir?</dt><dd>mais10(5) imprime 15. [1, 2, 3].map(vezes(5)) imprime [5, 10, 15].</dd><dt>Saída do JavaScript</dt><dd><pre>JavaScript:
+15
+[ 5, 10, 15 ]
+56
+{ nome: 'Ana', nota: 7 } { nome: 'Ana', nota: 8 }
+(A formatação dos objetos pode variar.)</pre></dd><dt>Saída do Java</dt><dd><pre>Java:
+14
+18
+1050.0
+[CABO, MONITOR, MOUSE, TECLADO]</pre></dd><dt>6.1 somador(10) já terminou de executar quando mais10(5) é chamado. Como a função devolvida ainda "lembra" o 10?</dt><dd>Porque a função guarda o valor 10 que foi passado antes. Aí quando chama mais10(5), ela soma 10 com 5.</dd><dt>6.2 Por que f.compose(g).apply(4) e f.andThen(g).apply(4) deram resultados diferentes? Qual deles corresponde ao compor(f, g) da Prática 1?</dt><dd>No compose faz g primeiro e depois f, dando 14. No andThen faz f primeiro e depois g, dando 18. O igual ao compor(f, g) é o compose.</dd></dl><h2>Prática 7: O laço vira pipeline</h2><dl><dt>7.1 Primeiro exercício escolhido (1, 2 ou 3): cole o seu código reescrito.</dt><dd><pre>Exercício 1 — Java:
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        List&lt;Integer&gt; nums = List.of(3, 8, 5, 12, 7, 6);
+        int soma = nums.stream()
+            .filter(n -&gt; n % 2 == 0)
+            .mapToInt(n -&gt; n * n)
+            .sum();
+        System.out.println(soma);
+    }
+}</pre></dd><dt>7.2 Segundo exercício escolhido: cole o seu código reescrito.</dt><dd><pre>Exercício 2 — JavaScript:
+const alunos = [
+  { nome: "Ana", nota: 8.5 },
+  { nome: "Bruno", nota: 5.0 },
+  { nome: "Carla", nota: 7.0 },
+  { nome: "Davi", nota: 9.5 }
+];
+const aprovados = alunos
+  .filter(aluno =&gt; aluno.nota &gt;= 6)
+  .map(aluno =&gt; aluno.nome.toUpperCase());
+console.log(aprovados.join(", "));</pre></dd><dt>Saídas das suas versões</dt><dd><pre>Resultados esperados:
+Exercício 1 (Java): 244
+Exercício 2 (JavaScript): ANA, CARLA, DAVI</pre></dd><dt>7.3 Qual versão é mais fácil de ler: a com laço ou a funcional? E qual é mais fácil de depurar (por exemplo, para ver um valor intermediário)?</dt><dd>Achei o funcional mais fácil de entender porque dá pra ver cada passo: filtra, transforma e soma. Mas com for também é tranquilo de testar.</dd></dl><h2>Fechamento: O que fica do paradigma funcional</h2><dl><dt>Uma função pura pode ler uma variável global que muda.</dt><dd>Falso</dd><dt>Em Scheme, a recursão em cauda não faz a pilha crescer.</dt><dd>Verdadeiro</dd><dt>O Python otimiza a recursão em cauda.</dt><dd>Falso</dd><dt>Em Haskell, [1 ..] só é calculada à medida que é usada.</dt><dd>Verdadeiro</dd><dt>filter, map e reduce dispensam laço e variável acumuladora.</dt><dd>Verdadeiro</dd><dt>Currying transforma uma função de vários parâmetros numa cadeia de funções de um parâmetro.</dt><dd>Verdadeiro</dd><dt>8.1 Qual versão é mais fácil de entender, e por quê? O livro estima que um programa funcional costuma levar cerca de 2 vezes mais tempo para executar (p. 678). Em que tipo de sistema você aceitaria esse custo, e em qual não?</dt><dd>Achei o Haskell mais curto, mas o C é mais fácil de entender porque já é mais conhecido. Eu usaria o jeito mais simples quando não precisasse de muito desempenho. Se fosse algo que tem que ser bem rápido, teria que testar primeiro.</dd><dt>8.2 Em uma frase: o que mais surpreendeu você nesta atividade?</dt><dd>O que mais me surpreendeu foi usar lista infinita sem o programa travar, porque ele só calcula o que precisa.</dd><dt>8.3 Qual é o erro de impressão, e como corrigir? O que a mensagem do compilador diz sobre o tipo que ele inferiu?</dt><dd>O erro é no b &lt;- h. Ali era pra comparar, então o certo é b &lt;= h. O &lt;- tenta pegar valores de uma lista, só que h é um número, por isso dá erro.</dd></dl></html>
